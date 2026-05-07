@@ -1,9 +1,9 @@
 package com.kidfollow.demo.service;
 
 import org.springframework.stereotype.Service;
-import com.kidfollow.modules.M1Driving.DrivingModule;
-import com.kidfollow.modules.M1Driving.DrivingDecision;
-import com.kidfollow.modules.M1Driving.SensorData;
+import com.kidfollow.driving.DrivingModule;
+import com.kidfollow.driving.IDrivingModule.IDrivingDecision;
+import com.kidfollow.driving.IDrivingModule.IDrivingContext;
 
 /**
  * 传感器数据处理服务 - 集成 kidfollow-core-lib 核心算法
@@ -15,10 +15,10 @@ public class SensorProcessingService {
     
     /**
      * 处理传感器数据并返回驾驶决策
-     * @param sensorData 传感器输入数据
+     * @param context 驾驶上下文
      * @return 驾驶决策结果
      */
-    public DrivingDecision processSensorData(SensorData sensorData) {
-        return drivingModule.makeDecision(sensorData);
+    public IDrivingDecision processSensorData(IDrivingContext context) {
+        return drivingModule.makeDecision(context);
     }
 }

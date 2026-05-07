@@ -5,8 +5,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import com.kidfollow.demo.service.SensorProcessingService;
-import com.kidfollow.modules.M1Driving.DrivingDecision;
-import com.kidfollow.modules.M1Driving.SensorData;
+import com.kidfollow.driving.IDrivingModule.IDrivingContext;
+import com.kidfollow.driving.IDrivingModule.IDrivingDecision;
 
 /**
  * WebSocket 控制器 - 处理传感器数据和返回决策结果
@@ -19,12 +19,12 @@ public class SensorWebSocketController {
     
     /**
      * 处理传感器数据并返回驾驶决策
-     * @param sensorData 传感器输入数据
+     * @param context 驾驶上下文
      * @return 驾驶决策结果
      */
     @MessageMapping("/sensor-data")
     @SendTo("/topic/decision")
-    public DrivingDecision processSensorData(SensorData sensorData) {
-        return sensorProcessingService.processSensorData(sensorData);
+    public IDrivingDecision processSensorData(IDrivingContext context) {
+        return sensorProcessingService.processSensorData(context);
     }
 }

@@ -1,0 +1,18 @@
+server:
+  port: 0  # 随机端口
+
+spring:
+  application:
+    name: kidfollow-demo-backend-test
+
+# 测试配置
+logging:
+  level:
+    com.kidfollow: DEBUG
+    org.springframework.web.socket: DEBUG
+
+# 测试数据
+kidfollow:
+  test:
+    enabled: true
+    mock-sensor-data: true

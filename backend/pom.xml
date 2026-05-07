@@ -38,13 +38,11 @@
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
-        <!-- Core Library (local dependency) -->
+        <!-- Core Library (local Maven repository) -->
         <dependency>
             <groupId>com.kidfollow</groupId>
             <artifactId>kidfollow-core-lib</artifactId>
-            <version>${kidfollow-core-lib.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../kidfollow-core-lib/target/kidfollow-core-lib-1.0.0.jar</systemPath>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Test -->
