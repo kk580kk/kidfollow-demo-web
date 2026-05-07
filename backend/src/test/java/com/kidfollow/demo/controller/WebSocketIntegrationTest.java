@@ -1,4 +1,4 @@
-package com.kidfollow.backend.controller;
+package com.kidfollow.demo.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

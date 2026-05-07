@@ -1,4 +1,4 @@
-package com.kidfollow.backend;
+package com.kidfollow.demo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.kidfollow.backend.controller;
+package com.kidfollow.demo.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class SensorWebSocketHandlerTest {
     private int port;
 
     @Autowired
-    private SensorWebSocketHandler sensorWebSocketHandler;
+    private SensorWebSocketController sensorWebSocketController;
 
     /**
      * 测试 WebSocket 连接建立

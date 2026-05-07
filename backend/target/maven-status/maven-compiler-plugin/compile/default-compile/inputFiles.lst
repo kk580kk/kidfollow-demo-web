@@ -1,7 +1,4 @@
 /Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/src/main/java/com/kidfollow/demo/service/SensorProcessingService.java
 /Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/src/main/java/com/kidfollow/demo/controller/SensorWebSocketController.java
 /Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/src/main/java/com/kidfollow/demo/KidFollowDemoApplication.java
-/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/src/main/java/com/kidfollow/backend/controller/SensorWebSocketHandler.java
-/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/src/main/java/com/kidfollow/backend/service/SensorFusionService.java
-/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/src/main/java/com/kidfollow/backend/config/WebSocketConfig.java
-/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/src/main/java/com/kidfollow/backend/KidFollowApplication.java
+/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/src/main/java/com/kidfollow/demo/config/WebSocketConfig.java
