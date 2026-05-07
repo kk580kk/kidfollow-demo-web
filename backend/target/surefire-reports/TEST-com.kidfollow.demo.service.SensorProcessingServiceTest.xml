@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.028" tests="8" errors="0" skipped="0" failures="2">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.024" tests="8" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="25"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/25.0.2/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/target/surefire/surefirebooter-20260508020650695_3.jar /Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/target/surefire 2026-05-08T02-06-48_805-jvmRun1 surefire-20260508020650695_1tmp surefire_0-20260508020650695_2tmp"/>
+    <property name="sun.java.command" value="/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/target/surefire/surefirebooter-20260508020733176_3.jar /Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/target/surefire 2026-05-08T02-07-33_152-jvmRun1 surefire-20260508020733176_1tmp surefire_0-20260508020733176_2tmp"/>
     <property name="http.nonProxyHosts" value="127.0.0.1|192.168.0.0/16|*.192.168.0.0/16|10.0.0.0/8|*.10.0.0.0/8|172.16.0.0/12|*.172.16.0.0/12|172.29.0.0/16|*.172.29.0.0/16|localhost|*.localhost|local|*.local|crashlytics.com|*.crashlytics.com|&lt;local&gt;|*.&lt;local&gt;"/>
     <property name="jdk.debug" value="release"/>
     <property name="test" value="SensorProcessingServiceTest"/>
@@ -30,7 +30,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/target/surefire/surefirebooter-20260508020650695_3.jar"/>
+    <property name="surefire.real.class.path" value="/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/target/surefire/surefirebooter-20260508020733176_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="127.0.0.1|192.168.0.0/16|*.192.168.0.0/16|10.0.0.0/8|*.10.0.0.0/8|172.16.0.0/12|*.172.16.0.0/12|172.29.0.0/16|*.172.29.0.0/16|localhost|*.localhost|local|*.local|crashlytics.com|*.crashlytics.com|&lt;local&gt;|*.&lt;local&gt;"/>
     <property name="java.runtime.version" value="25.0.2"/>
@@ -60,38 +60,12 @@
     <property name="socksNonProxyHosts" value="127.0.0.1|192.168.0.0/16|*.192.168.0.0/16|10.0.0.0/8|*.10.0.0.0/8|172.16.0.0/12|*.172.16.0.0/12|172.29.0.0/16|*.172.29.0.0/16|localhost|*.localhost|local|*.local|crashlytics.com|*.crashlytics.com|&lt;local&gt;|*.&lt;local&gt;"/>
     <property name="java.class.version" value="69.0"/>
   </properties>
-  <testcase name="testAPI_007_TargetLost" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.008"/>
-  <testcase name="testAPI_001_NormalFollow" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.004"/>
-  <testcase name="testAPI_003_LowBatteryReturn" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.0"/>
-  <testcase name="testAPI_005_EmergencyStop" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.002">
-    <failure message="expected: &lt;STOP&gt; but was: &lt;AVOID&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <STOP> but was: <AVOID>
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:177)
-	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1145)
-	at com.kidfollow.demo.service.SensorProcessingServiceTest.testAPI_005_EmergencyStop(SensorProcessingServiceTest.java:114)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-]]></failure>
-  </testcase>
+  <testcase name="testAPI_007_TargetLost" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.007"/>
+  <testcase name="testAPI_001_NormalFollow" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.003"/>
+  <testcase name="testAPI_003_LowBatteryReturn" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.001"/>
+  <testcase name="testAPI_005_EmergencyStop" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.0"/>
   <testcase name="testAPI_004_FenceAlarm" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.0"/>
-  <testcase name="testAPI_006_PriorityOverride" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.0">
-    <failure message="expected: &lt;STOP&gt; but was: &lt;RETURN&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <STOP> but was: <RETURN>
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:177)
-	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1145)
-	at com.kidfollow.demo.service.SensorProcessingServiceTest.testAPI_006_PriorityOverride(SensorProcessingServiceTest.java:134)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
-]]></failure>
-  </testcase>
+  <testcase name="testAPI_006_PriorityOverride" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.001"/>
   <testcase name="testAPI_002_ObstacleAvoid" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.0"/>
   <testcase name="testAPI_008_ResponseTime" classname="com.kidfollow.demo.service.SensorProcessingServiceTest" time="0.003"/>
 </testsuite>
