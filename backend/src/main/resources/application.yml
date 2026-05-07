@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: kidfollow-demo-backend
+
+# 日志配置
+logging:
+  level:
+    com.kidfollow: DEBUG
+    org.springframework.web.socket: DEBUG
+
+# KidFollow 配置
+kidfollow:
+  core:
+    lib-path: ../kidfollow-core-lib/target/kidfollow-core-lib-1.0.0.jar
+  websocket:
+    endpoint: /sensor-ws
+    allowed-origins: "*"
