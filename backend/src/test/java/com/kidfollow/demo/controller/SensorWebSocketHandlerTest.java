@@ -60,7 +60,7 @@ public class SensorWebSocketHandlerTest {
     @Test
     void testSensorDataFormat() {
         // 验证处理器存在
-        assertThat(sensorWebSocketHandler).isNotNull();
+        assertThat(sensorWebSocketController).isNotNull();
         System.out.println("✅ 传感器数据处理组件测试通过");
     }
 }

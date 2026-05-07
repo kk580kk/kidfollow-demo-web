@@ -1,0 +1,65 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< com.kidfollow:kidfollow-demo-backend >----------------
+[INFO] Building KidFollow Demo Backend 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.0:run (default-cli) > test-compile @ kidfollow-demo-backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ kidfollow-demo-backend ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ kidfollow-demo-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ kidfollow-demo-backend ---
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ kidfollow-demo-backend ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 6 source files with javac [debug release 17] to target/test-classes
+[INFO] 
+[INFO] <<< spring-boot:3.2.0:run (default-cli) < test-compile @ kidfollow-demo-backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.0:run (default-cli) @ kidfollow-demo-backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2026-05-08T02:13:52.927+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] c.k.demo.KidFollowDemoApplication        : Starting KidFollowDemoApplication using Java 25.0.2 with PID 36306 (/Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend/target/classes started by kk580kk in /Volumes/Serene 2T/Workspaces/github.com/kk580kk/kidfollow-demo-web/backend)
+2026-05-08T02:13:52.927+08:00 DEBUG 36306 --- [kidfollow-demo-backend] [           main] c.k.demo.KidFollowDemoApplication        : Running with Spring Boot v3.2.0, Spring v6.1.1
+2026-05-08T02:13:52.928+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] c.k.demo.KidFollowDemoApplication        : No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/Users/kk580kk/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.16/tomcat-embed-core-10.1.16.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+2026-05-08T02:13:53.133+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-05-08T02:13:53.135+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-08T02:13:53.135+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-05-08T02:13:53.146+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-08T02:13:53.147+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 206 ms
+2026-05-08T02:13:53.185+08:00 DEBUG 36306 --- [kidfollow-demo-backend] [           main] o.s.w.s.s.s.WebSocketHandlerMapping      : Patterns [/sensor-ws, /sensor-ws/**] in 'stompWebSocketHandlerMapping'
+2026-05-08T02:13:53.200+08:00 DEBUG 36306 --- [kidfollow-demo-backend] [           main] .WebSocketAnnotationMethodMessageHandler : 
+	c.k.d.c.SensorWebSocketController:
+	{[MESSAGE],[/sensor-data]}: processSensorData(IDrivingContext)
+2026-05-08T02:13:53.201+08:00 DEBUG 36306 --- [kidfollow-demo-backend] [           main] .WebSocketAnnotationMethodMessageHandler : 
+	o.s.b.a.w.s.e.BasicErrorController:
+	
+2026-05-08T02:13:53.253+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2026-05-08T02:13:53.253+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2026-05-08T02:13:53.253+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@77ab22be]]
+2026-05-08T02:13:53.253+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+2026-05-08T02:13:53.255+08:00  INFO 36306 --- [kidfollow-demo-backend] [           main] c.k.demo.KidFollowDemoApplication        : Started KidFollowDemoApplication in 0.427 seconds (process running for 0.505)
+2026-05-08T02:14:24.142+08:00  INFO 36306 --- [kidfollow-demo-backend] [nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-08T02:14:24.142+08:00  INFO 36306 --- [kidfollow-demo-backend] [nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-08T02:14:24.143+08:00  INFO 36306 --- [kidfollow-demo-backend] [nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
