@@ -17,7 +17,7 @@ const StatusBar = ({ status }: StatusBarProps) => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .status-panel {
           padding: 0.75rem 1rem;
         }

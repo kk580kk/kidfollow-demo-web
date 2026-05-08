@@ -29,8 +29,8 @@ const Vehicle = ({ position, rotation, speed }: { position: [number, number, num
         <meshStandardMaterial color="#388E3C" />
       </mesh>
       {[[-0.45, -0.15, 0.4], [0.45, -0.15, 0.4], [-0.45, -0.15, -0.4], [0.45, -0.15, -0.4]].map((pos, i) => (
-        <mesh key={i} position={pos as [number, number, number]} castShadow>
-          <cylinderGeometry args={[0.15, 0.15, 0.1, 16]} rotation={[0, 0, Math.PI / 2]} />
+        <mesh key={i} position={pos as [number, number, number]} rotation={[0, 0, Math.PI / 2]} castShadow>
+          <cylinderGeometry args={[0.15, 0.15, 0.1, 16]} />
           <meshStandardMaterial color="#333" />
         </mesh>
       ))}
@@ -112,7 +112,7 @@ const Obstacle = ({ position, distance }: { position: [number, number, number], 
 
 // 主场景
 const Scene3D = () => {
-  const { vehicleState, targetState, fusedData, rawData } = useSensorStore()
+  const { vehicleState, targetState, fusedData } = useSensorStore()
   
   return (
     <>

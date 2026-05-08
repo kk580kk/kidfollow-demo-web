@@ -208,7 +208,7 @@
                     <button class="control-btn follow-btn" onclick="simulateFollow()">跟随模式</button>
                     <button class="control-btn avoid-btn" onclick="simulateAvoid()">避障模式</button>
                     <button class="control-btn return-btn" onclick="simulateReturn()">返航模式</button>
-                    <button class="control-btn stop-btn" onclick="simulateStop()">紧急制动</button>
+                        <li>紧急制动：&lt;50ms响应时间</li>
                 </div>
                 
                 <div class="status-bar">
@@ -220,8 +220,8 @@
                     <ul style="padding-left: 20px; color: #495057;">
                         <li>智能跟随：自动保持2米安全距离</li>
                         <li>障碍物检测：180°全方位感知</li>
-                        <li>紧急制动：<50ms响应时间</li>
-                        <li>低电量返航：电量<20%自动返航</li>
+                        <li>紧急制动：&lt;50ms响应时间</li>
+                        <li>低电量返航：电量&lt;20%自动返航</li>
                         <li>电子围栏：越界自动告警</li>
                     </ul>
                 </div>
@@ -247,7 +247,7 @@
         }
         
         function simulateStop() {
-            document.querySelector('.status-text').textContent = '状态: 紧急制动 - 障碍物距离: 0.5m';
+                        <li>紧急制动：&lt;50ms响应时间</li>
             document.querySelector('.car-icon').style.left = '50%';
         }
         
@@ -257,5 +257,7 @@
             document.querySelector('.sensor-value:nth-child(4)').textContent = battery + '%';
         }, 5000);
     </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

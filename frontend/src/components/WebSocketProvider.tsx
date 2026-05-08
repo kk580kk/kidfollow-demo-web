@@ -1,6 +1,6 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useCallback } from 'react'
 import { useSensorStore } from '../stores/sensorStore'
-import type { SensorData, FusedEnvironmentData, Decision, WebSocketMessage } from '../types'
+import type { SensorData, FusedEnvironmentData } from '../types'
 
 interface WebSocketProviderProps {
   children: React.ReactNode
@@ -46,9 +46,6 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   children, 
   onConnectionChange 
 }) => {
-  const wsRef = useRef<WebSocket | null>(null)
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  
   const { 
     setRawData, 
     setFusedData, 
