@@ -23,6 +23,9 @@ interface SensorStore {
   // 连接状态
   isConnected: boolean
   
+  // 是否使用后端真实数据（WebSocket连接时启用，断开时回退仿真）
+  useBackendData: boolean
+  
   // 系统状态
   systemStatus: string
   
@@ -56,6 +59,7 @@ export const useSensorStore = create<SensorStore>((set) => ({
   },
   obstacles: [],
   isConnected: false,
+  useBackendData: false,
   systemStatus: '初始化中...',
 
   setRawData: (data) => set({ rawData: data }),
@@ -97,7 +101,7 @@ export const useSensorStore = create<SensorStore>((set) => ({
   
   setObstacles: (obstacles) => set({ obstacles }),
   
-  setConnected: (connected) => set({ isConnected: connected }),
+  setConnected: (connected) => set({ isConnected: connected, useBackendData: connected }),
   
   setSystemStatus: (status) => set({ systemStatus: status }),
 }))

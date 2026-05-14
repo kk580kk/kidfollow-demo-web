@@ -217,7 +217,7 @@ const StaticObstacle = ({ position, type, onRegister }: { position: [number, num
 }
 
 const Scene3D = ({ onDecisionLog }: { onDecisionLog?: (log: DecisionLog) => void }) => {
-  const { targetState, updateTargetPosition, updateFusedData, setRawData } = useSensorStore()
+  const { targetState, updateTargetPosition, updateFusedData, setRawData, useBackendData } = useSensorStore()
   const [vehiclePos, setVehiclePos] = useState<[number, number, number]>([0, 0.25, 2])
   const lastSensorUpdate = useRef(0)
 
@@ -242,6 +242,9 @@ const Scene3D = ({ onDecisionLog }: { onDecisionLog?: (log: DecisionLog) => void
   }, [onDecisionLog])
 
   useFrame(() => {
+    // 当 WebSocket 已连接时，使用后端真实数据，跳过本地仿真
+    if (useBackendData) return;
+
     const now = Date.now()
     if (now - lastSensorUpdate.current < 100) return
     lastSensorUpdate.current = now
