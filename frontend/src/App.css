@@ -6,29 +6,38 @@
 
 body {
   font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: #0a0a1a;
   min-height: 100vh;
   color: #e0e0e0;
+  overflow: hidden;
 }
 
 .app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.app-header {
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  padding: 1rem 2rem;
+/* 悬浮标题栏 */
+.app-header.floating {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0.8rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  height: 60px;
 }
 
 .app-header h1 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 600;
   background: linear-gradient(90deg, #00d4ff, #7b2cbf);
   -webkit-background-clip: text;
@@ -40,7 +49,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .status-dot {
@@ -65,55 +74,130 @@ body {
   50% { opacity: 0.5; }
 }
 
-.app-main {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 300px 1fr 300px;
-  gap: 1rem;
-  padding: 1rem;
-  overflow: hidden;
+/* 全屏3D场景容器 */
+.scene-fullscreen {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
 }
 
-.left-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.scene-fullscreen canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
-.center-panel {
-  display: flex;
-  flex-direction: column;
+/* 悬浮面板通用样式 */
+.floating-panel {
+  position: fixed;
+  top: 80px;
+  z-index: 100;
+  width: 280px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 
-.scene-container {
-  flex: 1;
-  border-radius: 12px;
-  overflow: hidden;
+.floating-panel.left {
+  left: 20px;
+}
+
+.floating-panel.right {
+  right: 20px;
+}
+
+/* 面板内容区域 */
+.floating-panel > div {
+  background: rgba(20, 20, 40, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
-.right-panel {
-  display: flex;
-  flex-direction: column;
+/* 面板标题 */
+.floating-panel .panel-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #00d4ff;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* 响应式布局 */
+/* 控制提示 - 悬浮在底部 */
+.control-hint.floating {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  color: #aaa;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+.control-hint strong {
+  color: #00d4ff;
+}
+
+.control-hint kbd {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #fff;
+  margin: 0 2px;
+}
+
+/* 响应式适配 */
 @media (max-width: 1200px) {
-  .app-main {
-    grid-template-columns: 250px 1fr 250px;
+  .floating-panel {
+    width: 240px;
   }
 }
 
 @media (max-width: 900px) {
-  .app-main {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
+  .floating-panel.left,
+  .floating-panel.right {
+    position: fixed;
+    top: auto;
+    bottom: 80px;
+    width: 45%;
+    max-height: 40vh;
   }
   
-  .left-panel,
-  .right-panel {
-    flex-direction: row;
-    overflow-x: auto;
+  .floating-panel.left {
+    left: 10px;
+  }
+  
+  .floating-panel.right {
+    right: 10px;
+  }
+  
+  .control-hint.floating {
+    font-size: 0.75rem;
+    padding: 8px 16px;
+    bottom: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .floating-panel.left,
+  .floating-panel.right {
+    width: calc(50% - 15px);
+  }
+  
+  .app-header h1 {
+    font-size: 1rem;
   }
 }

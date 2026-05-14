@@ -1,15 +1,15 @@
 import { useSensorStore } from '../stores/sensorStore'
-import type { DecisionType } from '../types'
+import { websocketService } from '../services/websocketService'
 
 const ControlPanel = () => {
   const { currentDecision, vehicleState, fusedData, isConnected } = useSensorStore()
 
-  const sendCommand = (type: DecisionType) => {
-    // 这里应该通过WebSocket发送控制命令
+  const sendCommand = (type: string) => {
+    websocketService.sendCommand('MODE_CHANGE', { mode: type })
     console.log(`发送命令: ${type}`)
   }
 
-  const getModeColor = (mode: DecisionType) => {
+  const getModeColor = (mode: string) => {
     switch (mode) {
       case 'FOLLOW': return 'success'
       case 'AVOID': return 'warning'
@@ -20,14 +20,14 @@ const ControlPanel = () => {
     }
   }
 
-  const getModeText = (mode: DecisionType) => {
+  const getModeText = (mode: string) => {
     switch (mode) {
-      case 'FOLLOW': return '跟随模式'
+      case 'FOLLOW': return '自动跟随'
       case 'AVOID': return '避障模式'
       case 'RETURN': return '返航模式'
       case 'STOP': return '紧急制动'
       case 'ANCHOR': return '锚定模式'
-      default: return '未知模式'
+      default: return '待机'
     }
   }
 
@@ -65,7 +65,7 @@ const ControlPanel = () => {
             disabled={!isConnected}
           >
             <span className="btn-icon">🚗</span>
-            跟随模式
+            自动跟随
           </button>
           <button
             className="btn btn-warning control-btn"
@@ -99,12 +99,12 @@ const ControlPanel = () => {
         <div className="control-section-title">系统参数</div>
         <div className="param-list">
           <div className="param-item">
-            <span className="param-label">避障距离</span>
-            <span className="param-value">3.0m</span>
-          </div>
-          <div className="param-item">
             <span className="param-label">跟随距离</span>
             <span className="param-value">2.0m</span>
+          </div>
+          <div className="param-item">
+            <span className="param-label">避障距离</span>
+            <span className="param-value">1.5m</span>
           </div>
           <div className="param-item">
             <span className="param-label">最大转向角</span>

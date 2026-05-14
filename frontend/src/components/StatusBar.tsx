@@ -19,13 +19,13 @@ const StatusBar = ({ status }: StatusBarProps) => {
 
       <style>{`
         .status-panel {
-          padding: 0.75rem 1rem;
+          padding: 0.75rem;
         }
         
         .status-content {
           display: flex;
-          justify-content: space-between;
-          align-items: center;
+          flex-direction: column;
+          gap: 0.5rem;
         }
         
         .status-indicator {
@@ -46,11 +46,13 @@ const StatusBar = ({ status }: StatusBarProps) => {
         .status-text {
           font-weight: 600;
           color: #00ff88;
+          font-size: 0.9rem;
         }
         
         .system-info {
           display: flex;
-          gap: 1.5rem;
+          flex-direction: column;
+          gap: 0.25rem;
           font-size: 0.75rem;
           color: #888;
         }

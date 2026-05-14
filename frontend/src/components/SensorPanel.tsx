@@ -1,34 +1,48 @@
 import { useSensorStore } from '../stores/sensorStore'
 
 const SensorPanel = () => {
-  const { rawData, fusedData } = useSensorStore()
+  const { rawData, fusedData, vehicleState } = useSensorStore()
+
+  // 确保有数据，没有时使用默认值
+  const safeRawData = rawData || {
+    battery: 85,
+    fenceStatus: 'SAFE' as const,
+    ultrasonicRadar: { frontLeft: 100, frontRight: 100, frontTop: 100, frontBottom: 100, rearLeft: 100, rearRight: 100, rearTop: 100, rearBottom: 100 },
+    laserScan: { ranges: [10, 10, 10, 10], angles: [0, -30, 30, -60], obstacleDetected: false, groundHoleDetected: false }
+  }
 
   const formatDistance = (value: number) => {
-    if (value === Infinity || value > 100) return '无检测'
+    if (value === undefined || value === null || value === Infinity || value > 100) return '无检测'
     return `${value.toFixed(2)}m`
   }
 
   const formatUltrasonic = (value: number) => {
-    if (value < 5 || value > 50) return '--'
+    if (value === undefined || value === null || value < 5 || value > 400) return '--'
     return `${value.toFixed(0)}cm`
   }
+
+  // 计算置信度（基于距离，越近越可靠）
+  const childDistance = fusedData?.childDistance || 0
+  const calculatedConfidence = childDistance > 0 && childDistance < 10 
+    ? Math.min(0.98, Math.max(0.6, 1 - childDistance / 15)) 
+    : 0
 
   return (
     <div className="panel">
       <div className="panel-title">传感器数据</div>
       
-      {/* 激光雷达 */}
+      {/* 激光雷达 - 检测障碍物 */}
       <div className="sensor-section">
-        <div className="sensor-section-title">激光雷达 (RPLIDAR A1/S1)</div>
+        <div className="sensor-section-title">激光雷达 (检测障碍物)</div>
         <div className="sensor-grid">
           <div className="sensor-item">
             <div className="sensor-label">扫描范围</div>
-            <div className="sensor-value info">180°</div>
+            <div className="sensor-value info">360°</div>
           </div>
           <div className="sensor-item">
             <div className="sensor-label">最近障碍物</div>
             <div className={`sensor-value ${
-              (fusedData?.nearestObstacleDistance || 10) < 1.0 ? 'danger' : 
+              (fusedData?.nearestObstacleDistance || 10) < 1.5 ? 'danger' : 
               (fusedData?.nearestObstacleDistance || 10) < 3.0 ? 'warning' : 'success'
             }`}>
               {formatDistance(fusedData?.nearestObstacleDistance || 10)}
@@ -37,13 +51,13 @@ const SensorPanel = () => {
           <div className="sensor-item">
             <div className="sensor-label">障碍物角度</div>
             <div className="sensor-value info">
-              {fusedData?.nearestObstacleAngle?.toFixed(0) || 0}°
+              {(fusedData?.nearestObstacleAngle || 0).toFixed(0)}°
             </div>
           </div>
           <div className="sensor-item">
-            <div className="sensor-label">地面坑洼</div>
-            <div className={`sensor-value ${fusedData?.groundHoleDetected ? 'danger' : 'success'}`}>
-              {fusedData?.groundHoleDetected ? '检测到' : '安全'}
+            <div className="sensor-label">检测状态</div>
+            <div className={`sensor-value ${safeRawData.laserScan.obstacleDetected ? 'warning' : 'success'}`}>
+              {safeRawData.laserScan.obstacleDetected ? '有障碍' : '通畅'}
             </div>
           </div>
         </div>
@@ -55,26 +69,26 @@ const SensorPanel = () => {
         <div className="sensor-grid">
           <div className="sensor-item">
             <div className="sensor-label">前左</div>
-            <div className="sensor-value info">
-              {formatUltrasonic(rawData?.ultrasonicRadar?.frontLeft || 0)}
+            <div className={`sensor-value ${safeRawData.ultrasonicRadar.frontLeft < 50 ? 'warning' : 'info'}`}>
+              {formatUltrasonic(safeRawData.ultrasonicRadar.frontLeft)}
             </div>
           </div>
           <div className="sensor-item">
             <div className="sensor-label">前右</div>
-            <div className="sensor-value info">
-              {formatUltrasonic(rawData?.ultrasonicRadar?.frontRight || 0)}
+            <div className={`sensor-value ${safeRawData.ultrasonicRadar.frontRight < 50 ? 'warning' : 'info'}`}>
+              {formatUltrasonic(safeRawData.ultrasonicRadar.frontRight)}
             </div>
           </div>
           <div className="sensor-item">
             <div className="sensor-label">前上</div>
             <div className="sensor-value info">
-              {formatUltrasonic(rawData?.ultrasonicRadar?.frontTop || 0)}
+              {formatUltrasonic(safeRawData.ultrasonicRadar.frontTop)}
             </div>
           </div>
           <div className="sensor-item">
             <div className="sensor-label">前下</div>
-            <div className="sensor-value info">
-              {formatUltrasonic(rawData?.ultrasonicRadar?.frontBottom || 0)}
+            <div className={`sensor-value ${safeRawData.ultrasonicRadar.frontBottom < 30 ? 'warning' : 'info'}`}>
+              {formatUltrasonic(safeRawData.ultrasonicRadar.frontBottom)}
             </div>
           </div>
         </div>
@@ -89,9 +103,9 @@ const SensorPanel = () => {
         </div>
       </div>
 
-      {/* 视觉系统 */}
+      {/* 视觉系统 - 修改为70°视角 */}
       <div className="sensor-section">
-        <div className="sensor-section-title">视觉系统 (180°全景)</div>
+        <div className="sensor-section-title">视觉系统 (前向70° × 3摄像头)</div>
         <div className="sensor-grid">
           <div className="sensor-item">
             <div className="sensor-label">目标检测</div>
@@ -101,8 +115,8 @@ const SensorPanel = () => {
           </div>
           <div className="sensor-item">
             <div className="sensor-label">置信度</div>
-            <div className="sensor-value info">
-              {((fusedData?.childConfidence || 0) * 100).toFixed(0)}%
+            <div className={`sensor-value ${calculatedConfidence > 0.8 ? 'success' : calculatedConfidence > 0.5 ? 'warning' : 'info'}`}>
+              {(calculatedConfidence * 100).toFixed(0)}%
             </div>
           </div>
           <div className="sensor-item">
@@ -127,20 +141,32 @@ const SensorPanel = () => {
           <div className="sensor-item">
             <div className="sensor-label">电池电量</div>
             <div className={`sensor-value ${
-              (rawData?.battery || 100) < 20 ? 'danger' : 
-              (rawData?.battery || 100) < 50 ? 'warning' : 'success'
+              safeRawData.battery < 20 ? 'danger' : 
+              safeRawData.battery < 50 ? 'warning' : 'success'
             }`}>
-              {rawData?.battery || 85}%
+              {safeRawData.battery}%
             </div>
           </div>
           <div className="sensor-item">
             <div className="sensor-label">围栏状态</div>
             <div className={`sensor-value ${
-              rawData?.fenceStatus === 'ALARM' ? 'danger' : 
-              rawData?.fenceStatus === 'WARNING' ? 'warning' : 'success'
+              safeRawData.fenceStatus === 'ALARM' ? 'danger' : 
+              safeRawData.fenceStatus === 'WARNING' ? 'warning' : 'success'
             }`}>
-              {rawData?.fenceStatus === 'ALARM' ? '危险' : 
-               rawData?.fenceStatus === 'WARNING' ? '警告' : '安全'}
+              {safeRawData.fenceStatus === 'ALARM' ? '危险' : 
+               safeRawData.fenceStatus === 'WARNING' ? '警告' : '安全'}
+            </div>
+          </div>
+          <div className="sensor-item">
+            <div className="sensor-label">运行模式</div>
+            <div className="sensor-value info">
+              {vehicleState?.mode || 'STOP'}
+            </div>
+          </div>
+          <div className="sensor-item">
+            <div className="sensor-label">当前速度</div>
+            <div className="sensor-value info">
+              {(vehicleState?.speed || 0).toFixed(0)}%
             </div>
           </div>
         </div>
@@ -185,6 +211,11 @@ const SensorPanel = () => {
           font-weight: 700;
           font-size: 1rem;
         }
+        
+        .sensor-value.success { color: #00ff00; }
+        .sensor-value.warning { color: #ffaa00; }
+        .sensor-value.danger { color: #ff4757; }
+        .sensor-value.info { color: #00d4ff; }
       `}</style>
     </div>
   )

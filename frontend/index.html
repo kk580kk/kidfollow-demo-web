@@ -1,263 +1,31 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KIDFOLLOW 智能童车演示</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .demo-container {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 1200px;
-            width: 90%;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin: 0;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 1.2em;
-        }
-        
-        .demo-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-        
-        .sensor-panel, .control-panel {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid #e9ecef;
-        }
-        
-        .panel-title {
-            font-size: 1.3em;
-            color: #495057;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        
-        .sensor-data {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        
-        .sensor-item {
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-        }
-        
-        .sensor-label {
-            font-size: 0.9em;
-            color: #6c757d;
-            margin-bottom: 5px;
-        }
-        
-        .sensor-value {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #28a745;
-        }
-        
-        .visualization {
-            height: 300px;
-            background: #2d3748;
-            border-radius: 10px;
-            margin-top: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .car-icon {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 60px;
-            background: #4CAF50;
-            border-radius: 10px;
-        }
-        
-        .child-icon {
-            position: absolute;
-            bottom: 50px;
-            left: 60%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 50px;
-            background: #2196F3;
-            border-radius: 50% 50% 0 0;
-        }
-        
-        .obstacle {
-            position: absolute;
-            width: 20px;
-            height: 40px;
-            background: #f44336;
-            border-radius: 5px;
-        }
-        
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .control-btn {
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .control-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        .follow-btn { background: #4CAF50; color: white; }
-        .avoid-btn { background: #FF9800; color: white; }
-        .return-btn { background: #2196F3; color: white; }
-        .stop-btn { background: #f44336; color: white; }
-        
-        .status-bar {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e8f5e8;
-            border-radius: 10px;
-            border-left: 4px solid #4CAF50;
-        }
-        
-        .status-text {
-            font-weight: bold;
-            color: #2e7d32;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIDFOLLOW 智能童车演示系统</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+      background: #1a1a2e;
+      min-height: 100vh;
+      color: #e0e0e0;
+    }
+    
+    #root {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
 </head>
 <body>
-    <div class="demo-container">
-        <div class="header">
-            <h1>KIDFOLLOW 智能童车演示</h1>
-            <p>基于 kidfollow-core-lib 的实时跟随与避障系统</p>
-        </div>
-        
-        <div class="demo-grid">
-            <div class="sensor-panel">
-                <div class="panel-title">传感器数据</div>
-                <div class="sensor-data">
-                    <div class="sensor-item">
-                        <div class="sensor-label">激光雷达</div>
-                        <div class="sensor-value">180° 扫描</div>
-                    </div>
-                    <div class="sensor-item">
-                        <div class="sensor-label">超声波雷达</div>
-                        <div class="sensor-value">8路阵列</div>
-                    </div>
-                    <div class="sensor-item">
-                        <div class="sensor-label">视觉识别</div>
-                        <div class="sensor-value">180° 全景</div>
-                    </div>
-                    <div class="sensor-item">
-                        <div class="sensor-label">电池电量</div>
-                        <div class="sensor-value">85%</div>
-                    </div>
-                </div>
-                
-                <div class="visualization" id="visualization">
-                    <div class="car-icon"></div>
-                    <div class="child-icon"></div>
-                    <div class="obstacle" style="left: 30%; bottom: 80px;"></div>
-                    <div class="obstacle" style="left: 70%; bottom: 120px;"></div>
-                </div>
-            </div>
-            
-            <div class="control-panel">
-                <div class="panel-title">控制系统</div>
-                <div class="controls">
-                    <button class="control-btn follow-btn" onclick="simulateFollow()">跟随模式</button>
-                    <button class="control-btn avoid-btn" onclick="simulateAvoid()">避障模式</button>
-                    <button class="control-btn return-btn" onclick="simulateReturn()">返航模式</button>
-                        <li>紧急制动：&lt;50ms响应时间</li>
-                </div>
-                
-                <div class="status-bar">
-                    <div class="status-text">状态: 正常跟随模式 - 距离: 2.0m, 速度: 3km/h</div>
-                </div>
-                
-                <div style="margin-top: 20px;">
-                    <div class="panel-title">核心功能</div>
-                    <ul style="padding-left: 20px; color: #495057;">
-                        <li>智能跟随：自动保持2米安全距离</li>
-                        <li>障碍物检测：180°全方位感知</li>
-                        <li>紧急制动：&lt;50ms响应时间</li>
-                        <li>低电量返航：电量&lt;20%自动返航</li>
-                        <li>电子围栏：越界自动告警</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // 模拟核心功能调用
-        function simulateFollow() {
-            document.querySelector('.status-text').textContent = '状态: 跟随模式激活 - 距离: 2.0m, 速度: 3km/h';
-            document.querySelector('.car-icon').style.left = '45%';
-        }
-        
-        function simulateAvoid() {
-            document.querySelector('.status-text').textContent = '状态: 避障模式激活 - 检测到障碍物';
-            document.querySelector('.car-icon').style.left = '35%';
-        }
-        
-        function simulateReturn() {
-            document.querySelector('.status-text').textContent = '状态: 返航模式激活 - 电量: 15%';
-            document.querySelector('.car-icon').style.left = '25%';
-        }
-        
-        function simulateStop() {
-                        <li>紧急制动：&lt;50ms响应时间</li>
-            document.querySelector('.car-icon').style.left = '50%';
-        }
-        
-        // 模拟实时数据更新
-        setInterval(() => {
-            const battery = Math.floor(Math.random() * 20) + 80;
-            document.querySelector('.sensor-value:nth-child(4)').textContent = battery + '%';
-        }, 5000);
-    </script>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

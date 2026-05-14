@@ -29,9 +29,11 @@ interface SensorStore {
   // 动作
   setRawData: (data: SensorData) => void
   setFusedData: (data: FusedEnvironmentData) => void
+  updateFusedData: (data: Partial<FusedEnvironmentData>) => void
   setCurrentDecision: (decision: Decision) => void
   updateVehicleState: (state: Partial<VehicleState>) => void
   updateTargetState: (state: Partial<TargetState>) => void
+  updateTargetPosition: (position: [number, number, number]) => void
   setObstacles: (obstacles: Obstacle[]) => void
   setConnected: (connected: boolean) => void
   setSystemStatus: (status: string) => void
@@ -59,6 +61,25 @@ export const useSensorStore = create<SensorStore>((set) => ({
   setRawData: (data) => set({ rawData: data }),
   
   setFusedData: (data) => set({ fusedData: data }),
+
+  updateFusedData: (data) => set((prev) => ({
+    fusedData: prev.fusedData ? { ...prev.fusedData, ...data } : { ...data, 
+      nearestObstacleDistance: 0,
+      nearestObstacleAngle: 0,
+      obstacleInFront: false,
+      groundHoleDetected: false,
+      frontUltrasonicMin: 0,
+      rearUltrasonicMin: 0,
+      frontCollisionRisk: false,
+      rearCollisionRisk: false,
+      childDetected: false,
+      childDistance: 0,
+      childAngle: 0,
+      childConfidence: 0,
+      batteryLevel: 0,
+      fenceStatus: 'SAFE'
+    } as FusedEnvironmentData,
+  })),
   
   setCurrentDecision: (decision) => set({ currentDecision: decision }),
   
@@ -68,6 +89,10 @@ export const useSensorStore = create<SensorStore>((set) => ({
   
   updateTargetState: (state) => set((prev) => ({
     targetState: { ...prev.targetState, ...state },
+  })),
+  
+  updateTargetPosition: (position) => set((prev) => ({
+    targetState: { ...prev.targetState, position, detected: true, confidence: 1.0 },
   })),
   
   setObstacles: (obstacles) => set({ obstacles }),
