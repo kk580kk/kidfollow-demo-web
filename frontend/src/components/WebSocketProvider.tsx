@@ -21,6 +21,8 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     updateTargetState,
     setConnected,
     setSystemStatus,
+    addBackendDecisionLog,
+    setNearestObstacleType,
   } = useSensorStore()
   
   const clientRef = useRef<Client | null>(null)
@@ -65,10 +67,14 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
                 childDistance: data.sensorData.visualTarget?.position?.y || 0,
                 childAngle: 0,
                 childConfidence: data.sensorData.visualTarget?.confidence || 0,
-                batteryLevel: data.sensorData.battery || 100,
+                batteryLevel: 85,
                 fenceStatus: data.sensorData.fenceStatus || 'SAFE',
               }
               setFusedData(fusedData)
+              
+              // 提取障碍物类型 (rock/cone/block)
+              const obsType = data.sensorData.laserScan?.nearestObstacleType || null
+              setNearestObstacleType(obsType)
             }
           } catch (e) {
             console.error('解析传感器数据失败:', e)
@@ -85,6 +91,14 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
                 position: data.vehiclePosition || [0, 0, 0],
                 speed: data.decision.speed || 0,
                 mode: data.decision.type || 'STOP',
+              })
+              // 记录决策日志
+              addBackendDecisionLog({
+                type: data.decision.type || 'STOP',
+                speed: data.decision.speed || 0,
+                angle: data.decision.angle || 0,
+                reason: data.decision.reason || '',
+                timestamp: data.decision.timestamp || Date.now(),
               })
             }
           } catch (e) {
@@ -153,7 +167,7 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         clientRef.current.deactivate()
       }
     }
-  }, [setRawData, setFusedData, setCurrentDecision, updateVehicleState, updateTargetState, setConnected, setSystemStatus, onConnectionChange])
+  }, [setRawData, setFusedData, setCurrentDecision, updateVehicleState, updateTargetState, setConnected, setSystemStatus, onConnectionChange, addBackendDecisionLog, setNearestObstacleType])
 
   useEffect(() => {
     const cleanup = connect()

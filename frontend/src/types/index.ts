@@ -18,6 +18,7 @@ export interface LaserScanData {
   angles: number[]
   obstacleDetected: boolean
   groundHoleDetected: boolean
+  nearestObstacleType?: string
 }
 
 export interface UltrasonicRadarData {

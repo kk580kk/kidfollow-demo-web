@@ -1,7 +1,13 @@
 import { useSensorStore } from '../stores/sensorStore'
 
 const SensorPanel = () => {
-  const { rawData, fusedData, vehicleState } = useSensorStore()
+  const { rawData, fusedData, vehicleState, nearestObstacleType } = useSensorStore()
+  
+  const obstacleTypeLabel = (type: string | null) => {
+    if (!type) return '无'
+    const map: Record<string, string> = { rock: '石头', cone: '锥桶', block: '方块' }
+    return map[type] || type
+  }
 
   // 确保有数据，没有时使用默认值
   const safeRawData = rawData || {
@@ -46,6 +52,12 @@ const SensorPanel = () => {
               (fusedData?.nearestObstacleDistance || 10) < 3.0 ? 'warning' : 'success'
             }`}>
               {formatDistance(fusedData?.nearestObstacleDistance || 10)}
+            </div>
+          </div>
+          <div className="sensor-item">
+            <div className="sensor-label">障碍物类型</div>
+            <div className="sensor-value info">
+              {obstacleTypeLabel(nearestObstacleType)}
             </div>
           </div>
           <div className="sensor-item">
@@ -140,11 +152,8 @@ const SensorPanel = () => {
         <div className="sensor-grid">
           <div className="sensor-item">
             <div className="sensor-label">电池电量</div>
-            <div className={`sensor-value ${
-              safeRawData.battery < 20 ? 'danger' : 
-              safeRawData.battery < 50 ? 'warning' : 'success'
-            }`}>
-              {safeRawData.battery}%
+            <div className="sensor-value success">
+              {fusedData?.batteryLevel || 85}%
             </div>
           </div>
           <div className="sensor-item">

@@ -25,6 +25,9 @@ const Vehicle = ({
   const vehicleRef = useRef<THREE.Group>(null)
   const frontLeftWheelRef = useRef<THREE.Group>(null)
   const frontRightWheelRef = useRef<THREE.Group>(null)
+  const rearLeftWheelRef = useRef<THREE.Group>(null)
+  const rearRightWheelRef = useRef<THREE.Group>(null)
+  const wheelRotRef = useRef(0)
   const [vehiclePos, setVehiclePos] = useState<[number, number, number]>([0, 0.25, 2])
   const [vehicleRot, setVehicleRot] = useState(0)
   const [isMoving, setIsMoving] = useState(false)
@@ -143,8 +146,21 @@ const Vehicle = ({
     vehicleRef.current.position.x = THREE.MathUtils.lerp(vehicleRef.current.position.x, newPos[0], 0.15)
     vehicleRef.current.position.z = THREE.MathUtils.lerp(vehicleRef.current.position.z, newPos[2], 0.15)
     vehicleRef.current.rotation.y = THREE.MathUtils.lerp(vehicleRef.current.rotation.y, newRot, 0.1)
-    if (frontLeftWheelRef.current) frontLeftWheelRef.current.rotation.y = newSteering * 0.6
-    if (frontRightWheelRef.current) frontRightWheelRef.current.rotation.y = newSteering * 0.6
+    // 前轮转向
+    const steerAngle = newSteering * 0.6
+    if (frontLeftWheelRef.current) frontLeftWheelRef.current.rotation.y = steerAngle
+    if (frontRightWheelRef.current) frontRightWheelRef.current.rotation.y = steerAngle
+    
+    // 驱动轮转动动画（所有轮子都转，后轮驱动）
+    if (moving) {
+      wheelRotRef.current += 0.15
+      const rot = wheelRotRef.current
+      if (frontLeftWheelRef.current) frontLeftWheelRef.current.rotation.x = rot
+      if (frontRightWheelRef.current) frontRightWheelRef.current.rotation.x = rot
+      if (rearLeftWheelRef.current) rearLeftWheelRef.current.rotation.x = rot
+      if (rearRightWheelRef.current) rearRightWheelRef.current.rotation.x = rot
+    }
+    
     vehicleRef.current.position.y = moving ? 0.25 + Math.sin(Date.now() * 0.015) * 0.015 : 0.25
   })
 
@@ -153,8 +169,10 @@ const Vehicle = ({
       <mesh position={[0, 0, 0]} castShadow receiveShadow><boxGeometry args={[0.7, 0.15, 1]} /><meshStandardMaterial color="#333" /></mesh>
       <mesh position={[0, 0.2, 0]} castShadow receiveShadow><boxGeometry args={[0.6, 0.25, 0.8]} /><meshStandardMaterial color="#4CAF50" /></mesh>
       <mesh position={[0, 0.4, -0.1]} castShadow><boxGeometry args={[0.5, 0.15, 0.5]} /><meshStandardMaterial color="#388E3C" /></mesh>
-      <group position={[-0.35, 0, -0.35]}><mesh rotation={[0, 0, Math.PI/2]} castShadow><cylinderGeometry args={[0.12, 0.12, 0.08, 16]} /><meshStandardMaterial color="#1a1a1a" /></mesh></group>
-      <group position={[0.35, 0, -0.35]}><mesh rotation={[0, 0, Math.PI/2]} castShadow><cylinderGeometry args={[0.12, 0.12, 0.08, 16]} /><meshStandardMaterial color="#1a1a1a" /></mesh></group>
+      {/* 后轮（驱动轮）— 银色轮毂 */}
+      <group ref={rearLeftWheelRef} position={[-0.35, 0, -0.35]}><mesh rotation={[0, 0, Math.PI/2]} castShadow><cylinderGeometry args={[0.13, 0.13, 0.1, 16]} /><meshStandardMaterial color="#888" metalness={0.6} roughness={0.3} /></mesh></group>
+      <group ref={rearRightWheelRef} position={[0.35, 0, -0.35]}><mesh rotation={[0, 0, Math.PI/2]} castShadow><cylinderGeometry args={[0.13, 0.13, 0.1, 16]} /><meshStandardMaterial color="#888" metalness={0.6} roughness={0.3} /></mesh></group>
+      {/* 前轮（转向轮）— 黑色轮胎 */}
       <group ref={frontLeftWheelRef} position={[-0.35, 0, 0.35]}><mesh rotation={[0, 0, Math.PI/2]} castShadow><cylinderGeometry args={[0.12, 0.12, 0.08, 16]} /><meshStandardMaterial color="#1a1a1a" /></mesh></group>
       <group ref={frontRightWheelRef} position={[0.35, 0, 0.35]}><mesh rotation={[0, 0, Math.PI/2]} castShadow><cylinderGeometry args={[0.12, 0.12, 0.08, 16]} /><meshStandardMaterial color="#1a1a1a" /></mesh></group>
       {isMoving && <mesh position={[0, 0.6, 0]}><ringGeometry args={[0.15, 0.2, 16]} /><meshBasicMaterial color={pathMode === 'STOP' ? "#ff0000" : pathMode.includes('AVOID') ? "#ffaa00" : "#00ff00"} transparent opacity={0.6} /></mesh>}

@@ -8,6 +8,9 @@ interface SensorStore {
   // 融合后的数据
   fusedData: FusedEnvironmentData | null
   
+  // 最近障碍物类型（rock/cone/block）
+  nearestObstacleType: string | null
+  
   // 当前决策
   currentDecision: Decision | null
   
@@ -19,6 +22,9 @@ interface SensorStore {
   
   // 障碍物列表
   obstacles: Obstacle[]
+  
+  // 决策日志（从后端接收）
+  backendDecisionLogs: Decision[]
   
   // 连接状态
   isConnected: boolean
@@ -60,6 +66,8 @@ export const useSensorStore = create<SensorStore>((set) => ({
   obstacles: [],
   isConnected: false,
   useBackendData: false,
+  nearestObstacleType: null,
+  backendDecisionLogs: [],
   systemStatus: '初始化中...',
 
   setRawData: (data) => set({ rawData: data }),
@@ -104,4 +112,10 @@ export const useSensorStore = create<SensorStore>((set) => ({
   setConnected: (connected) => set({ isConnected: connected, useBackendData: connected }),
   
   setSystemStatus: (status) => set({ systemStatus: status }),
+  
+  addBackendDecisionLog: (decision: Decision) => set((prev) => ({
+    backendDecisionLogs: [decision, ...prev.backendDecisionLogs].slice(0, 50),
+  })),
+  
+  setNearestObstacleType: (type: string | null) => set({ nearestObstacleType: type }),
 }))
