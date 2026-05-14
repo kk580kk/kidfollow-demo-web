@@ -2,6 +2,7 @@ import { useEffect, useCallback, useRef } from 'react'
 import { Client } from '@stomp/stompjs'
 import { useSensorStore } from '../stores/sensorStore'
 import { websocketService } from '../services/websocketService'
+import { sceneSyncService } from '../services/sceneSyncService'
 import type { FusedEnvironmentData } from '../types'
 
 interface WebSocketProviderProps {
@@ -23,10 +24,14 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     setSystemStatus,
     addBackendDecisionLog,
     setNearestObstacleType,
+    vehicleState,
+    targetState,
+    obstacles,
   } = useSensorStore()
   
   const clientRef = useRef<Client | null>(null)
   const reconnectTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const sceneSyncIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   // 连接WebSocket
   const connect = useCallback(() => {
@@ -157,17 +162,43 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     
     clientRef.current = client
     websocketService.setClient(client)
+    sceneSyncService.setClient(client)
     client.activate()
+    
+    // 启动场景数据同步（每100ms发送一次）
+    sceneSyncIntervalRef.current = setInterval(() => {
+      if (client.connected) {
+        sceneSyncService.updateSceneData({
+          vehicle: {
+            position: vehicleState.position,
+            rotation: vehicleState.rotation[1],
+          },
+          target: {
+            position: targetState.position,
+            detected: targetState.detected,
+          },
+          obstacles: obstacles.map((o: any) => ({
+            position: o.position,
+            type: o.type || 'rock',
+          })),
+        })
+        sceneSyncService.startSync(100)
+      }
+    }, 100)
     
     return () => {
       if (reconnectTimerRef.current) {
         clearTimeout(reconnectTimerRef.current)
       }
+      if (sceneSyncIntervalRef.current) {
+        clearInterval(sceneSyncIntervalRef.current)
+      }
+      sceneSyncService.stopSync()
       if (clientRef.current) {
         clientRef.current.deactivate()
       }
     }
-  }, [setRawData, setFusedData, setCurrentDecision, updateVehicleState, updateTargetState, setConnected, setSystemStatus, onConnectionChange, addBackendDecisionLog, setNearestObstacleType])
+  }, [setRawData, setFusedData, setCurrentDecision, updateVehicleState, updateTargetState, setConnected, setSystemStatus, onConnectionChange, addBackendDecisionLog, setNearestObstacleType, vehicleState, targetState, obstacles])
 
   useEffect(() => {
     const cleanup = connect()
@@ -176,6 +207,10 @@ const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       if (reconnectTimerRef.current) {
         clearTimeout(reconnectTimerRef.current)
       }
+      if (sceneSyncIntervalRef.current) {
+        clearInterval(sceneSyncIntervalRef.current)
+      }
+      sceneSyncService.stopSync()
     }
   }, [connect])
 

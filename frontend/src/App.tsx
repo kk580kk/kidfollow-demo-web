@@ -7,6 +7,7 @@ import ControlPanel from './components/ControlPanel'
 import StatusBar from './components/StatusBar'
 import WebSocketProvider from './components/WebSocketProvider'
 import DecisionLogPanel from './components/DecisionLogPanel'
+import { PathPlanningPanel } from './components/PathPlanningPanel'
 import './App.css'
 
 interface DecisionLog {
@@ -57,6 +58,7 @@ function App() {
 
           {/* 右侧悬浮面板 */}
           <div className="floating-panel right">
+            <PathPlanningPanel />
             <ControlPanel />
             <DecisionLogPanel logs={decisionLogs} />
             <StatusBar status={systemStatus} />

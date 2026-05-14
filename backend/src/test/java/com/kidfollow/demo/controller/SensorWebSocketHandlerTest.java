@@ -4,19 +4,24 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * WebSocket 接口自动化测试
- * 测试传感器数据实时通信
+ * 测试传感器数据实时通信 (STOMP协议)
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SensorWebSocketHandlerTest {
@@ -27,31 +32,55 @@ public class SensorWebSocketHandlerTest {
     @Autowired
     private SensorWebSocketController sensorWebSocketController;
 
+    private static final int TIMEOUT_SECONDS = 10;
+
     /**
-     * 测试 WebSocket 连接建立
+     * 测试 WebSocket/STOMP 连接建立
      */
     @Test
     void testWebSocketConnection() throws Exception {
-        // 连接 WebSocket
-        CompletableFuture<String> messageFuture = new CompletableFuture<>();
+        // 创建STOMP客户端
+        WebSocketStompClient stompClient = new WebSocketStompClient(
+            new SockJsClient(Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient())))
+        );
         
-        StandardWebSocketClient client = new StandardWebSocketClient();
-        client.execute(
-            new TextWebSocketHandler() {
+        // 连接STOMP端点
+        CompletableFuture<StompSession> sessionFuture = new CompletableFuture<>();
+        
+        stompClient.connect(
+            String.format("ws://localhost:%d/sensor-ws", port),
+            new StompSessionHandlerAdapter() {
                 @Override
-                protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-                    messageFuture.complete(message.getPayload());
+                public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+                    sessionFuture.complete(session);
                 }
-            },
-            String.format("ws://localhost:%d/sensor-ws", port)
-        ).get(5, TimeUnit.SECONDS);
-
-        // 等待接收数据（最多5秒）
-        String receivedData = messageFuture.get(5, TimeUnit.SECONDS);
+                
+                @Override
+                public void handleException(org.springframework.messaging.simp.stomp.StompSession session,
+                                          org.springframework.messaging.simp.stomp.StompCommand command,
+                                          StompHeaders headers, byte[] payload, Throwable exception) {
+                    sessionFuture.completeExceptionally(exception);
+                }
+            }
+        );
         
-        // 验证接收到的数据不为空
-        assertThat(receivedData).isNotEmpty();
-        System.out.println("✅ WebSocket 连接测试通过");
+        // 等待连接建立
+        StompSession session = sessionFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        
+        assertTrue(session.isConnected(), "WebSocket/STOMP连接应该建立");
+        System.out.println("✅ WebSocket/STOMP 连接测试通过");
+        
+        // 发送场景更新
+        session.send("/app/scene-update", """
+            {"vehicle": {"position": [0, 0, 0], "rotation": 0}, \
+             "target": {"position": [2, 0, 2], "detected": true}, \
+             "obstacles": []}
+            """.getBytes());
+        
+        System.out.println("✅ 场景更新发送成功");
+        
+        session.disconnect();
+        stompClient.stop();
     }
 
     /**

@@ -1,6 +1,11 @@
 import { create } from 'zustand'
 import type { SensorData, FusedEnvironmentData, Decision, VehicleState, TargetState, Obstacle } from '../types'
 
+interface PathPoint {
+  x: number
+  y: number
+}
+
 interface SensorStore {
   // 原始传感器数据
   rawData: SensorData | null
@@ -35,6 +40,13 @@ interface SensorStore {
   // 系统状态
   systemStatus: string
   
+  // 路径规划数据
+  pathPlanningPath: PathPoint[]
+  pathPlanningGridMap: number[][] | null
+  currentManeuver: string | null
+  maneuverStep: number
+  maneuverTotalSteps: number
+  
   // 动作
   setRawData: (data: SensorData) => void
   setFusedData: (data: FusedEnvironmentData) => void
@@ -46,6 +58,15 @@ interface SensorStore {
   setObstacles: (obstacles: Obstacle[]) => void
   setConnected: (connected: boolean) => void
   setSystemStatus: (status: string) => void
+  addBackendDecisionLog: (decision: Decision) => void
+  setNearestObstacleType: (type: string | null) => void
+  
+  // 路径规划动作
+  setPathPlanningPath: (path: PathPoint[]) => void
+  setPathPlanningGridMap: (gridMap: number[][] | null) => void
+  setCurrentManeuver: (maneuver: string | null) => void
+  setManeuverStep: (step: number) => void
+  setManeuverTotalSteps: (totalSteps: number) => void
 }
 
 export const useSensorStore = create<SensorStore>((set) => ({
@@ -69,6 +90,13 @@ export const useSensorStore = create<SensorStore>((set) => ({
   nearestObstacleType: null,
   backendDecisionLogs: [],
   systemStatus: '初始化中...',
+  
+  // 路径规划数据初始值
+  pathPlanningPath: [],
+  pathPlanningGridMap: null,
+  currentManeuver: null,
+  maneuverStep: 0,
+  maneuverTotalSteps: 0,
 
   setRawData: (data) => set({ rawData: data }),
   
@@ -118,4 +146,11 @@ export const useSensorStore = create<SensorStore>((set) => ({
   })),
   
   setNearestObstacleType: (type: string | null) => set({ nearestObstacleType: type }),
+  
+  // 路径规划动作
+  setPathPlanningPath: (path: PathPoint[]) => set({ pathPlanningPath: path }),
+  setPathPlanningGridMap: (gridMap: number[][] | null) => set({ pathPlanningGridMap: gridMap }),
+  setCurrentManeuver: (maneuver: string | null) => set({ currentManeuver: maneuver }),
+  setManeuverStep: (step: number) => set({ maneuverStep: step }),
+  setManeuverTotalSteps: (totalSteps: number) => set({ maneuverTotalSteps: totalSteps }),
 }))

@@ -1,4 +1,11 @@
+com/kidfollow/demo/service/SensorDataSimulationService.class
 com/kidfollow/demo/config/WebSocketConfig.class
+com/kidfollow/demo/controller/PathPlanningWebSocketHandler.class
+com/kidfollow/demo/controller/PathPlanningWebSocketHandler$PathPlanningRequest.class
 com/kidfollow/demo/service/SensorProcessingService.class
 com/kidfollow/demo/KidFollowDemoApplication.class
 com/kidfollow/demo/controller/SensorWebSocketController.class
+com/kidfollow/demo/controller/CommandController.class
+com/kidfollow/demo/service/SceneBasedSensorService.class
+com/kidfollow/demo/service/CoreLibIntegrationService.class
+com/kidfollow/demo/controller/SceneWebSocketController.class

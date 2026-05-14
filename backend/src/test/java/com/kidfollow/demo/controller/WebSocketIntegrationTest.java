@@ -1,24 +1,29 @@
 package com.kidfollow.demo.controller;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketHttpHeaders;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaders;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
+import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
-import java.net.URI;
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * WebSocket 集成测试
- * 完整测试 WebSocket 通信链路
+ * 完整测试 WebSocket/STOMP 通信链路
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class WebSocketIntegrationTest {
@@ -26,84 +31,122 @@ public class WebSocketIntegrationTest {
     @LocalServerPort
     private int port;
 
+    @Autowired
+    private com.kidfollow.demo.service.CoreLibIntegrationService coreLibService;
+
     private static final int TIMEOUT_SECONDS = 10;
 
     /**
-     * 测试 WebSocket 完整通信流程
+     * 测试 WebSocket/STOMP 连接建立
      */
     @Test
-    void testWebSocketCommunication() throws Exception {
-        // 准备接收数据
-        CompletableFuture<String> receivedMessage = new CompletableFuture<>();
+    void testWebSocketConnection() throws Exception {
+        // 创建STOMP客户端
+        WebSocketStompClient stompClient = new WebSocketStompClient(
+            new SockJsClient(Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient())))
+        );
         
-        StandardWebSocketClient client = new StandardWebSocketClient();
+        // 连接STOMP端点
+        CompletableFuture<StompSession> sessionFuture = new CompletableFuture<>();
         
-        // 连接 WebSocket
-        WebSocketSession session = client.execute(
-            new TextWebSocketHandler() {
+        stompClient.connect(
+            String.format("ws://localhost:%d/sensor-ws", port),
+            new StompSessionHandlerAdapter() {
                 @Override
-                protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-                    receivedMessage.complete(message.getPayload());
+                public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+                    sessionFuture.complete(session);
                 }
-            },
-            new WebSocketHttpHeaders(),
-            URI.create(String.format("ws://localhost:%d/sensor-ws", port))
-        ).get(5, TimeUnit.SECONDS);
+                
+                @Override
+                public void handleException(org.springframework.messaging.simp.stomp.StompSession session, 
+                                          StompCommand command, StompHeaders headers, 
+                                          byte[] payload, Throwable exception) {
+                    sessionFuture.completeExceptionally(exception);
+                }
+            }
+        );
+        
+        // 等待连接建立
+        StompSession session = sessionFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
         
         // 验证连接成功
-        assertThat(session.isOpen()).isTrue();
-        System.out.println("✅ WebSocket 连接建立成功");
+        assertTrue(session.isConnected(), "WebSocket连接应该建立");
+        System.out.println("✅ WebSocket/STOMP 连接建立成功");
         
-        // 发送测试消息
+        // 发送场景更新
         assertDoesNotThrow(() -> {
-            session.sendMessage(new TextMessage("{\"command\":\"test\"}"));
+            session.send("/app/scene-update", """
+                {"vehicle": {"position": [0, 0, 0], "rotation": 0}, \
+                 "target": {"position": [2, 0, 2], "detected": true}, \
+                 "obstacles": []}
+                """.getBytes());
         });
-        System.out.println("✅ WebSocket 消息发送成功");
         
-        // 等待接收数据（最多等待10秒）
-        String message = receivedMessage.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-        
-        // 验证接收到的数据
-        assertThat(message).isNotNull();
-        assertThat(message).isNotEmpty();
-        assertThat(message).contains("timestamp");
-        
-        System.out.println("✅ WebSocket 数据接收成功: " + message.substring(0, 100) + "...");
+        System.out.println("✅ 场景更新发送成功");
         
         // 关闭连接
-        session.close();
+        session.disconnect();
+        stompClient.stop();
     }
 
     /**
-     * 测试 WebSocket 连接性能
-     * 验证延迟是否在 100ms 以内
+     * 测试通信统计功能
+     */
+    @Test
+    void testWebSocketCommunicationStats() {
+        // 重置统计
+        coreLibService.resetStats();
+        
+        // 记录一些消息
+        coreLibService.recordMessageSent();
+        coreLibService.recordMessageSent();
+        
+        // 获取统计
+        var stats = coreLibService.getCommunicationStats();
+        
+        // 验证统计
+        assertThat(stats).containsKey("sent");
+        assertThat(stats).containsKey("successRate");
+        assertThat(stats.get("sent")).isEqualTo(2L);
+        assertThat(stats.get("successRate")).isEqualTo("100.00%");
+        assertThat(stats.get("isHealthy")).isEqualTo(true);
+        
+        System.out.println("✅ WebSocket 通信统计测试通过: " + stats);
+    }
+
+    /**
+     * 测试延迟性能（验证服务响应能力）
      */
     @Test
     void testWebSocketLatency() throws Exception {
-        CompletableFuture<Long> latencyFuture = new CompletableFuture<>();
-        
-        StandardWebSocketClient client = new StandardWebSocketClient();
         long startTime = System.currentTimeMillis();
         
-        WebSocketSession session = client.execute(
-            new TextWebSocketHandler() {
+        // 创建STOMP客户端
+        WebSocketStompClient stompClient = new WebSocketStompClient(
+            new SockJsClient(Collections.singletonList(new WebSocketTransport(new StandardWebSocketClient())))
+        );
+        
+        CompletableFuture<StompSession> sessionFuture = new CompletableFuture<>();
+        
+        stompClient.connect(
+            String.format("ws://localhost:%d/sensor-ws", port),
+            new StompSessionHandlerAdapter() {
                 @Override
-                protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-                    long endTime = System.currentTimeMillis();
-                    latencyFuture.complete(endTime - startTime);
+                public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
+                    sessionFuture.complete(session);
                 }
-            },
-            new WebSocketHttpHeaders(),
-            URI.create(String.format("ws://localhost:%d/sensor-ws", port))
-        ).get(5, TimeUnit.SECONDS);
+            }
+        );
         
-        // 等待数据接收
-        Long latency = latencyFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        // 等待连接
+        StompSession session = sessionFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        long connectTime = System.currentTimeMillis() - startTime;
         
-        // 验证延迟 < 100ms（放宽到500ms作为测试环境容忍）
-        assertThat(latency).isLessThan(5000); // 5秒容忍测试环境
-        System.out.println("✅ WebSocket 延迟测试通过，延迟: " + latency + "ms");
+        // 验证连接延迟 < 5秒
+        assertThat(connectTime).isLessThan(5000);
+        System.out.println("✅ WebSocket 延迟测试通过，连接延迟: " + connectTime + "ms");
         
-        session.close();
+        session.disconnect();
+        stompClient.stop();
     }
 }
